@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Anniversary Quest — For My Love 💖</title>
+  <style>
+    :root{
+      --bg:#0f0f14;--card:#171826;--ink:#f5f7fb;--muted:#c9cbe0;
+      --accent:#ff4d8d;--accent2:#6ae3ff;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:radial-gradient(1200px 600px at 80% -10%,#1b1b2f 0%,#0f0f14 40%),#0f0f14; color:var(--ink); display:flex;align-items:center;justify-content:center; padding:20px}
+    .app{width:min(980px,100%); background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015)); border:1px solid rgba(255,255,255,.06); border-radius:24px; box-shadow:0 20px 50px rgba(0,0,0,.45); overflow:hidden; position:relative}
+    header{padding:18px 20px; display:flex; align-items:center; gap:14px; border-bottom:1px solid rgba(255,255,255,.08)}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:800}
+    .heart{width:30px;height:30px;display:grid;place-items:center;background:var(--accent);color:#111;border-radius:10px;box-shadow:0 10px 22px rgba(255,77,141,.35)}
+    .brand small{display:block;font-size:12px;color:var(--muted);font-weight:600}
+    .progress{height:8px;background:#1f2130;border-radius:999px;overflow:hidden;flex:1;margin-left:auto}
+    .bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .35s ease}
+
+    main{padding:20px; display:grid; grid-template-columns:1fr; gap:18px}
+    .card{background:var(--card); border:1px solid rgba(255,255,255,.06); border-radius:20px; padding:18px}
+    .center{display:grid;place-items:center;text-align:center}
+    h1{margin:8px 0 6px;font-size:28px}
+    p.lead{margin:0;color:var(--muted)}
+    .hero-img{width:100%; max-height:360px; object-fit:cover; border-radius:16px; border:1px solid rgba(255,255,255,.06); cursor:pointer; transition: transform .35s ease, box-shadow .35s ease}
+    .hero-img.clickable:hover{ transform:scale(1.02); box-shadow:0 22px 44px rgba(0,0,0,.5); }
+    /* New: Flip Card CSS */
+    .flip-card-container {
+      width: 100%;
+      height: 360px; /* Same as max-height of hero-img */
+      position: relative;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 1s;
+      transform-style: preserve-3d;
+      border-radius: 16px;
+    }
+    .flip-card-container.rotated .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.06);
+      box-shadow: 0 10px 22px rgba(0,0,0,.35);
+    }
+    .flip-card-front img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 16px;
+    }
+    .card-journey-text {
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.7);
+        font-weight: 600;
+        margin-top: 10px;
+        line-height: 1.4;
+        width: 100%;
+  	height: 100%;
+    }
+    .flip-card-back {
+      background-color: var(--accent);
+      color: #000;
+      transform: rotateY(180deg);
+      display: flex;
+      flex-direction: column; /* This is new, to stack the elements */
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      font-weight: 800;
+      line-height: 1.4;
+    }
+
+    .options{display:grid; gap:12px; margin-top:16px}
+    button.option{width:100%; padding:14px 16px; border-radius:14px; background:#1f2130; border:1px solid rgba(255,255,255,.08); color:var(--ink); font-size:16px; cursor:pointer; transition:.18s transform,.18s background,.18s border}
+    button.option:hover{transform:translateY(-1px)}
+    button.option:disabled{opacity:.7;cursor:default}
+
+    .nav{display:flex; gap:10px; justify-content:center; margin-top:10px}
+    .btn{padding:12px 16px; border-radius:12px; background:linear-gradient(90deg,var(--accent),var(--accent2)); border:none; color:#111; font-weight:800; cursor:pointer; box-shadow:0 8px 22px rgba(0,0,0,.25)}
+    .btn.secondary{background:#24263a;color:var(--ink); border:1px solid rgba(255,255,255,.08)}
+
+    .caption{color:var(--muted); margin-top:10px}
+    .shayari{font-size:18px; line-height:1.6; white-space:pre-line}
+
+    footer{padding:10px 18px 18px; color:var(--muted); text-align:center}
+
+    /* Celebration layer */
+    .celebrate{pointer-events:none; position:absolute; inset:0; display:grid; place-items:center}
+    .toast{
+      background:#111a; border:1px solid rgba(255,255,255,.18); padding:12px 14px; border-radius:12px;
+      backdrop-filter: blur(6px); font-weight:600; opacity:0; transform:translateY(10px) scale(.98);
+      animation:toast-in .35s ease forwards;
+      max-width:min(90%,720px); text-align:center;
+    }
+	@keyframes confettiFall {
+  0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+}
+
+.confetti {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background: red;
+  animation: confettiFall 3s linear forwards;
+  z-index: 9999;
+}
+
+    @keyframes toast-in{to{opacity:1; transform:translateY(0) scale(1)}}
+
+    /* Hearts & Balloons */
+    .burst{position:absolute; width:0; height:0; inset:0; overflow:visible; pointer-events:none}
+    .particle{
+      position:absolute; left:50%; top:55%;
+      width:14px; height:14px; transform:translate(-50%,-50%) rotate(45deg);
+      opacity:0; animation:fly 1800ms ease-out forwards;
+    }
+    .particle.heart{background:var(--accent)}
+    .particle.heart::before,.particle.heart::after{
+      content:""; position:absolute; width:14px; height:14px; background:var(--accent); border-radius:50%
+    }
+    .particle.heart::before{left:-7px}
+    .particle.heart::after{top:-7px}
+
+    .particle.balloon{
+      width:16px;height:22px;border-radius:10px 10px 12px 12px;background:var(--accent2);
+      box-shadow:0 8px 16px rgba(0,0,0,.25);
+    }
+    .particle.balloon::after{
+      content:""; position:absolute; bottom:-6px; left:50%; width:2px; height:10px; background:#d0f8ff; transform:translateX(-50%);
+    }
+
+    @keyframes fly{
+      5%{opacity:1}
+      100%{
+        transform:translate(var(--tx), var(--ty)) rotate(45deg);
+        opacity:0
+      }
+    }
+
+    /* ---- Envelope (pink/red) ---- */
+    .envelope-wrap{display:grid;place-items:center;min-height:360px}
+    .envelope{
+      position:relative; width:min(640px,92vw); aspect-ratio:4/3; cursor:pointer;
+      filter:drop-shadow(0 18px 36px rgba(0,0,0,.45));
+      transform-style:preserve-3d; perspective:1200px;
+    }
+    .env-body{
+      position:absolute; inset:0; border-radius:18px; overflow:hidden;
+      background:linear-gradient(180deg,#ff7aa6 0%, #ff5b8f 35%, #e43d6b 100%);
+      border:1px solid rgba(255,255,255,.35);
+    }
+    .env-liner{
+      position:absolute; inset:10px; border-radius:14px;
+      background:repeating-linear-gradient(45deg, rgba(255,255,255,.06) 0 14px, rgba(255,255,255,.03) 14px 28px);
+      opacity:.7; mix-blend-mode:screen;
+    }
+    .env-flap{
+      position:absolute; left:0; right:0; top:0; height:55%;
+      background:linear-gradient(180deg,#ff9dbd 0%, #ff6c98 60%, #d83a68 100%);
+      clip-path:polygon(0 0,100% 0,50% 100%);
+      border-top-left-radius:18px; border-top-right-radius:18px;
+      transform-origin:50% 0; transform:rotateX(0deg); transition:transform .9s cubic-bezier(.2,.8,.1,1);
+      border:1px solid rgba(255,255,255,.6); border-bottom:none;
+      z-index:30;
+    }
+    .env-stamp{
+  position:absolute; 
+  right:18px; 
+  top:18px; 
+  width:68px; 
+  height:68px; 
+  border-radius:10px;
+  background-image: url('assets/20.jpg');
+  background-size: cover;
+  background-position: center;
+  /* background:radial-gradient(circle at 30% 30%, #ffd1e2, #ff96b3 60%, #ff6a90); */
+  box-shadow:0 6px 16px rgba(0,0,0,.25); 
+  border:1px dashed rgba(255,255,255,.85);
+  transform:rotate(-8deg); 
+  z-index:40;
+}
+    .env-seal{
+      position:absolute; left:50%; top:46%; transform:translate(-50%,-50%);
+      width:82px; height:82px; border-radius:50%;
+      background:radial-gradient(circle at 30% 30%, #fff, #ffd6e6 55%, #ff93b4);
+      box-shadow:0 8px 20px rgba(0,0,0,.25);
+      display:grid; place-items:center; font-weight:900; color:#b31448; letter-spacing:.5px;
+      border:2px solid #fff; z-index:35;
+    }
+    .env-seal:before{content:"❤"; font-size:28px; opacity:.9}
+
+    .envelope.open .env-flap{ transform:rotateX(-170deg); transition:transform .9s cubic-bezier(.2,.8,.1,1); }
+    .envelope.open .env-seal{ opacity:0; transition:opacity .4s .45s; }
+
+    /* revealed photo */
+    .mail-content{ margin-top:16px; text-align:center }
+    .mail-photo{ width:min(640px,92vw); max-height:60vh; object-fit:cover; border-radius:16px; border:1px solid rgba(255,255,255,.18); box-shadow:0 14px 34px rgba(0,0,0,.45); cursor:pointer; opacity:0; transform:translateY(16px) scale(.98); transition:opacity .45s, transform .45s; z-index:10 }
+    .mail-photo.show{ opacity:1; transform:translateY(0) scale(1); }
+
+    .shayari-typed{ display:inline-block; text-align:left; font-size:18px; line-height:1.7; margin-top:12px; color:var(--ink); min-height:56px; white-space:pre-wrap; }
+
+    /* small helper */
+    .small-muted{ color:var(--muted); font-size:13px; margin-top:8px }
+
+    @media (max-width:520px){ h1{font-size:22px} .env-seal{width:60px;height:60px} .env-stamp{width:52px;height:52px} }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <header>
+      <div class="brand">
+        <div class="heart">❤</div>
+        <div>
+          Anniversary Quest for Riya
+          <small>Made with love by Anirban</small>
+        </div>
+      </div>
+      <div class="progress" aria-label="progress"><div class="bar" id="bar"></div></div>
+      <button class="btn secondary" id="soundBtn" aria-pressed="false">🔈 Music</button>
+    </header>
+    <main>
+      <div class="card center" id="stage"></div>
+    </main>
+
+    <div class="celebrate">
+      <div id="toastWrap"></div>
+      <div id="burst" class="burst"></div>
+    </div>
+
+    <footer>
+     </footer>
+  </div>
+
+  <!-- audio -->
+<audio id="firstSong" src="assets/firstSong.MP3" preload="auto"></audio>
+<audio id="secondSong" src="assets/secondSong.MP3" preload="auto"></audio>
+  <audio id="bgm" loop>
+    <source src="" type="audio/mpeg">
+  </audio>
+  <audio id="crinkle">
+    <source src="assets/i-love-you-cartoon-voice-136531.MP3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    var firstSong = document.getElementById('firstSong');
+    var secondSong = document.getElementById('secondSong');
+
+    // Add an event listener to the first song
+    firstSong.addEventListener('ended', function() {
+        secondSong.play(); // Play the second song after the first one ends
+    });
+
+    // Make the second song loop
+    secondSong.loop = true;
+    "use strict";
+
+    const GF_NAME = "Riya";
+    const ANNIV_TEXT = "Happy 1st Anniversary";
+
+    /* photo breaks - placeholders (replace with your files & shayari) */
+    const PHOTO_BREAKS = [
+      { src:"assets/1.jpg", caption:"Jahaan tum ho, wahaan main hoon. Mera dil se dil tak ka safar bas tum tak hai.❤️❤️" },
+      { src:"assets/2.jpg", caption:"Tumhari aankhon ka jaadu, mere dil ko bhaaye. Tumhari muskaan ki khushboo, mere khwaabon mein samaaye." },
+      { src:"assets/3.jpg", caption:"Yeh ishq hai Ghalib bhi na bata paaye. Nazren mili, dil dhadka, aur zamana bhool gaye." },
+      { src:"assets/4.jpg", caption:"Teri dhadkan hi zindagi ka kissa hai mera, tu zindagi ka ek aham hissa hai mera." },
+      { src:"assets/5.jpeg", caption:"Mere paas mere habib aa zara aur dil se kareeb aa. Tujhe dhadkano mein basa loon main, ki bichadne ka koi dar na ho." },
+      { src:"assets/6.jpeg", caption:"Agar mujhe samajh aaya hai ki pyaar kya hai, to vah tumhari vajah se hai." },
+      { src:"assets/7.jpeg", caption:"Teri baahon mein hi milta hai mujhe sukoon, yeh duniya ke saare toofan yahin khatm ho jaate hain." },
+      { src:"assets/8.jpeg", caption:"Jab khamosh nigaahon se baat hoti hai, to aise hi mohabbat ki shuruaat hoti hai." },
+      { src:"assets/9.jpeg", caption:"Pyaar woh ehsaas hai jo andar se roshni karta hai." },
+      { src:"assets/10.jpeg", caption:"Tum mere liye wahi ho, jo aasmaan ke liye chaand hai" },
+      { src:"assets/11.jpeg", caption:"Pyaar mein milna zaroori nahi, pyaar mein izhaar bhi zaroori nahi. Zaroori sirf ehsaas hai jo zindagi sanwaare, unhe paana ya na paana zaroori nahi." },
+      { src:"assets/13.jpeg", caption:"Humesha ke liye bas tera hoon." },
+      { src:"assets/14.jpeg", caption:"Tere saath chalna, har kadam par bas tera hona. Yeh zindagi tere bina, bas ek sapna hai sona." },
+      { src:"assets/15.jpeg", caption:"Meri namkeen si zindagi ki mithaas ho tum." },
+      { src:"assets/16.jpeg", caption:"Mohabbat mein gussa aur shaq wahi karta hai, jisme mohabbat koot-koot ke bhari hoti hai." },
+      { src:"assets/17.jpeg", caption:"Tum hi ho, jo meri zindagi se kabhi judaa nahi ho sakte." },
+      { src:"assets/18.jpeg", caption:"I fell in love with your soul before I touched your skin." },
+      { src:"assets/19.jpg", caption:"Tumhari khushi, meri khushi hai." },
+    ];
+    const PHOTO_MIN_SPAN = 5;
+    const PHOTO_MAX_SPAN = 10;
+    const PHOTOS_PER_GROUP = 2;
+
+    /* ---------- QUESTION BANK (60) ---------- */
+    const QUESTION_BANK = [
+      { q:"What part of me do you secretly love the most?", options:[ {text:"My lips",msg:"So you’ve been staring at my lips all this time, huh? Naughty 😉"}, {text:"My hands",msg:"Guess I should hold you more often… forever."}, {text:"My voice",msg:"So my voice is your weakness? I’m going to whisper in your ear more often now."}, {text:"My whole body",msg:"Woah, Maa… you really don’t hold back 😏."} ] },
+      { q:"If I kissed you slowly in the middle of a conversation, what would you do?", options:[ {text:"Pull me closer",msg:"You’d pull me closer? Don’t tempt me to try it right now."}, {text:"Smile and kiss back",msg:"That smile with a kiss… you’d kill me with sweetness."}, {text:"Lose track of what we were saying",msg:"Exactly… who needs words when we have this?"}, {text:"Not let me stop",msg:"You wouldn’t let me stop? Maa… now you’re speaking my language 😏."} ] },
+      { q:"Which kiss makes your heart race the most?", options:[ {text:"Neck kiss",msg:"Ah… the weak spot. Duly noted."}, {text:"Long, deep kiss",msg:"You like it intense… I love that."}, {text:"Playful bite on the lip",msg:"Maa… you’re making me imagine things."}, {text:"Whispered kiss on the ear",msg:"Dangerous choice… that’s how I’ll drive you crazy."} ] },
+      { q:"If I whispered something naughty in your ear right now, how would you react?", options:[ {text:"Blush instantly",msg:"Awww… my Maa blushing is the cutest thing."}, {text:"Bite your lip",msg:"Now that’s unfair… you know I can’t resist when you do that."}, {text:"Say ‘prove it’",msg:"Challenge accepted, Maa 😏."}, {text:"Pull me into a kiss",msg:"You’re damn bold… I like it."} ] },
+      { q:"Where do you wish I’d kiss you more often?", options:[ {text:"Lips",msg:"Oh, Maa… I’ll keep those lips busy then."}, {text:"Neck",msg:"Danger zone, huh? I’m all in."}, {text:"Collarbone",msg:"Maa, you just gave me my next mission."}, {text:"Somewhere only you know 😏",msg:"Now you’re keeping secrets from me? I’m coming to find out."} ] },
+      { q:"If we were alone in a dark room, what would you want to happen first?", options:[ {text:"Hug tightly",msg:"Safe in my arms… always."}, {text:"Start kissing",msg:"Straight to the point, huh?"}, {text:"Whisper sweet things",msg:"I’ll whisper until you melt."}, {text:"Let the moment take over",msg:"Maa… you’re trouble, and I love it."} ] },
+      { q:"What’s your favorite “accidental” touch from me?", options:[ {text:"My hand brushing your thigh",msg:"Oh, you noticed that?"}, {text:"My fingers touching your hair",msg:"I’ll do it more often now."}, {text:"My arm sliding around your waist",msg:"Mine. Always mine."}, {text:"My lips brushing against your cheek",msg:"Next time, I won’t stop at the cheek."} ] },
+      { q:"If I said “I want you” right now, what would you do?", options:[ {text:"Smile and say “I’m yours”",msg:"Forever mine, Maa ❤️."}, {text:"Tease me back",msg:"Careful… you know I’ll win."}, {text:"Close the distance instantly",msg:"That’s my Maa."}, {text:"Ask, “How much?” with a smirk",msg:"Enough to make you forget everything else."} ] },
+      { q:"Which one turns you on more?", options:[ {text:"Slow, teasing touches",msg:"We’ll take it slow then… very slow."}, {text:"Intense eye contact",msg:"Maa… you know what that does to me."}, {text:"Whispering your name",msg:"I’ll whisper it till you shiver."}, {text:"All of the above",msg:"So you basically want me to ruin you… got it."} ] },
+      { q:"If we woke up together in the morning, what would you want first?", options:[ {text:"Breakfast in bed",msg:"I’ll feed you… and then kiss you."}, {text:"Cuddles under the blanket",msg:"You’ll never get out of my arms."}, {text:"Lazy morning kisses",msg:"Best way to start a day with my Maa."}, {text:"Another round of sleep… or something else 😏",msg:"Something else, huh? I like where this is going."} ] },
+
+      /* 11 - 20 */
+      { q:"What’s your secret weakness when it comes to me?", options:[ {text:"My smell",msg:"I’ll make sure you can’t forget it."}, {text:"My eyes",msg:"They only see you."}, {text:"My touch",msg:"I’ll never stop touching you then."}, {text:"My voice",msg:"I’ll keep talking until you melt."} ] },
+      { q:"If I pinned you against the wall, what would you do?", options:[ {text:"Push me away playfully",msg:"Maa… you wouldn’t last long."}, {text:"Pull me closer",msg:"That’s what I like to hear."}, {text:"Whisper something naughty",msg:"You’re dangerous, and I love it."}, {text:"Kiss me hard",msg:"Straight to the point… I’m in trouble."} ] },
+      { q:"Which part of my body do you secretly want to explore more?", options:[ {text:"My chest",msg:"I’ll let you."}, {text:"My hair",msg:"Run your fingers through it anytime."}, {text:"My back",msg:"You’ll find more than you expect."}, {text:"All of me",msg:"Maa… you’re greedy, and I like it."} ] },
+      { q:"If I blindfolded you, how would you feel?", options:[ {text:"Nervous but excited",msg:"I’ll make sure it’s worth it."}, {text:"Completely ready",msg:"Oh, you trust me that much?"}, {text:"Curious and playful",msg:"I’ll keep you guessing."}, {text:"Wildly impatient",msg:"Maa… you’re making my job easier."} ] },
+      { q:"What’s your favorite time for romance?", options:[ {text:"Early morning",msg:"Wake-up calls just got interesting."}, {text:"Late at night",msg:"Darkness is our friend."}, {text:"Afternoon surprises",msg:"I’ll keep you on your toes."}, {text:"Anytime, anywhere",msg:"Maa… you’re my kind of person."} ] },
+      { q:"If I kissed you and didn’t stop, how long would you last?", options:[ {text:"A few seconds",msg:"Liar 😏."}, {text:"A few minutes",msg:"I’ll test that."}, {text:"As long as you want",msg:"Challenge accepted."}, {text:"Forever",msg:"Now that’s the right answer."} ] },
+      { q:"Which naughty thought crosses your mind most about me?", options:[ {text:"Kissing you",msg:"Then what’s stopping you?"}, {text:"Touching you",msg:"My body’s all yours."}, {text:"Holding you close",msg:"I’ll never let go."}, {text:"All of the above",msg:"Maa… you’re hopelessly mine."} ] },
+      { q:"If I ran my hand slowly down your back, what would you do?", options:[ {text:"Shiver",msg:"I’d keep doing it."}, {text:"Turn around and kiss me",msg:"Smart choice."}, {text:"Pull me closer",msg:"That’s my Maa."}, {text:"Tell me to keep going",msg:"Maa… you’re so bold."} ] },
+      { q:"If I leaned in really close but didn’t kiss you, what would you do?", options:[ {text:"Kiss me first",msg:"I wouldn’t complain."}, {text:"Wait for me to make the move",msg:"I’ll make it unforgettable."}, {text:"Tease me",msg:"Dangerous game, Maa."}, {text:"Pull me in anyway",msg:"You always win."} ] },
+      { q:"If I said “Tonight is yours,” what would you do?", options:[ {text:"Smile and blush",msg:"That smile is all I need."}, {text:"Take control",msg:"I’m yours anyway."}, {text:"Ask “Are you sure?”",msg:"Absolutely sure."}, {text:"Whisper “I’ve been waiting for this”",msg:"Then let’s not waste time."} ] },
+
+      /* 21 - 30 */
+      { q:"What’s the first thing you notice when I start undressing?", options:[ {text:"My lips",msg:"Hmm… I see you’re a kisser before anything else. 😘"}, {text:"My chest",msg:"Naughty girl… you have your priorities. 😉"}, {text:"My abs (or belly)",msg:"Ohhh, someone’s been looking closely… 😏"}, {text:"My… lower part",msg:"Damn! Straight to business, huh? 🔥"} ] },
+      { q:"Which type of kiss turns you on the most?", options:[ {text:"Slow & deep",msg:"You love to savor every second… just like me. ❤️"}, {text:"Quick but passionate",msg:"You like it short but intense… dangerous combo. 🔥"}, {text:"Biting & teasing",msg:"Ahh, you’re a playful little troublemaker. 😏"}, {text:"Everywhere kisses",msg:"OMG… you’re making me melt already. 🥵"} ] },
+      { q:"Where would you want me to kiss you when we’re alone?", options:[ {text:"Neck",msg:"The way you shiver when I kiss there… mmm. 😘"}, {text:"Behind your ear",msg:"That whisper and warm breath will drive you crazy. 🔥"}, {text:"Inner thigh",msg:"You’re bold, and I like it. 😏"}, {text:"Everywhere",msg:"Ohhh baby, you’re too hot to handle. 🥵"} ] },
+      { q:"What’s your favorite thing I do in bed?", options:[ {text:"Holding you tight",msg:"You feel safest in my arms… and I love it. ❤️"}, {text:"Whispering in your ear",msg:"You love when I talk naughty, don’t you? 😉"}, {text:"Kissing you slowly",msg:"You want me to take my time… oh, I will. 😘"}, {text:"Making you scream my name",msg:"Oh damn, Riya… you’re really naughty. 🔥"} ] },
+      { q:"If I blindfold you, what’s the first thing you want me to do?", options:[ {text:"Kiss your lips",msg:"You want it soft and loving first. ❤️"}, {text:"Bite your neck",msg:"You want to be teased till you can’t take it. 😏"}, {text:"Run my hands all over you",msg:"You want to feel me everywhere… mmm. 🔥"}, {text:"Surprise you completely",msg:"Oh, you’re a dangerous little mystery lover. 😉"} ] },
+      { q:"If we were alone in the shower, what would you do?", options:[ {text:"Wash my hair",msg:"Sweet and caring… but I know your real thoughts. 😉"}, {text:"Push me against the wall",msg:"Damn! Straight to the hot scene. 🥵"}, {text:"Kiss me under the water",msg:"That’s a movie scene I’d love to live. ❤️"}, {text:"Soap me up slowly",msg:"Naughty and slippery… I like it. 😏"} ] },
+      { q:"Which clothing of mine turns you on most?", options:[ {text:"Shirt unbuttoned halfway",msg:"You love the tease. 😉"}, {text:"Towel around my waist",msg:"Mmm… fresh out of the shower fantasy. 🔥"}, {text:"Tight jeans",msg:"Ohh, checking me out, are we? 😏"}, {text:"No clothes at all",msg:"Straightforward and deadly naughty. 🥵"} ] },
+      { q:"If I text you “I’m in the mood” at midnight, what’s your reply?", options:[ {text:"“I’m on my way”",msg:"Damn… you’re quick! 😉"}, {text:"“Tell me more…”",msg:"You like the build-up… teasing queen. 😏"}, {text:"“I’m already waiting”",msg:"Whoa… someone’s eager. 🔥"}, {text:"Send a picture",msg:"Ohhhh… you’re dangerous. 🥵"} ] },
+      { q:"Where do you want me to touch you first when we’re alone?", options:[ {text:"Your waist",msg:"You love it slow and sweet. ❤️"}, {text:"Your back",msg:"Mmm… you love that warm hold. 😏"}, {text:"Your face",msg:"Romantic baby. 😘"}, {text:"Your… special place",msg:"No patience at all… and I like it. 🔥"} ] },
+      { q:"What’s the wildest place you’d make out with me?", options:[ {text:"Kitchen counter",msg:"Ohh, chef’s kiss in a whole new way. 😏"}, {text:"Car backseat",msg:"Steamy windows… love it. 🔥"}, {text:"Beach at night",msg:"Waves, wind, and us… perfect. ❤️"}, {text:"Elevator",msg:"Fast, risky, and hot… dangerous combo. 😉"} ] },
+
+      /* 31 - 40 */
+      { q:"If I tied your hands, what would you say?", options:[ {text:"“Be gentle”",msg:"Cute… but I know you want more. 😉"}, {text:"“Don’t stop”",msg:"Oh baby, you’re bold. 🔥"}, {text:"“Surprise me”",msg:"You’re ready for anything… dangerous. 😏"}, {text:"“Do your worst”",msg:"Damn… you’re playing with fire. 🥵"} ] },
+      { q:"How long do you like foreplay to last?", options:[ {text:"Just a minute",msg:"Straight to the main show. 😉"}, {text:"5–10 mins",msg:"You like the perfect balance. ❤️"}, {text:"15+ mins",msg:"You love the tease… and I’ll deliver. 😏"}, {text:"As long as possible",msg:"Ohhh… you’re dangerous. 🔥"} ] },
+      { q:"Which naughty text from me would turn you on most?", options:[ {text:"“I can’t stop thinking about you”",msg:"Melting already, huh? ❤️"}, {text:"“I want you right now”",msg:"Damn, your heart skipped a beat. 😉"}, {text:"“Guess what I’m not wearing”",msg:"You’re blushing right now, I know. 😏"}, {text:"A picture without words",msg:"Dangerous move… but you’d love it. 🥵"} ] },
+      { q:"If I woke you up at 3 AM for something naughty, what would you do?", options:[ {text:"Push me away",msg:"Liar… I know you’d give in. 😉"}, {text:"Pull me closer",msg:"That’s my girl. ❤️"}, {text:"Take control",msg:"Ohhh… feisty! 😏"}, {text:"Let me do anything I want",msg:"Damn… Riya, you’re making me crazy. 🔥"} ] },
+      { q:"Which part of my body would you bite first?", options:[ {text:"Lip",msg:"Soft but teasing… I like it. 😉"}, {text:"Neck",msg:"Instant goosebumps. ❤️"}, {text:"Shoulder",msg:"Ohh… you’re getting bold. 😏"}, {text:"Somewhere lower",msg:"Damn… you’re too hot. 🥵"} ] },
+      { q:"What’s your favorite sound in bed?", options:[ {text:"My moans",msg:"Ohhh… you naughty listener. 😉"}, {text:"Your moans",msg:"You love hearing yourself lose control. 🔥"}, {text:"The whispers",msg:"Soft and deadly… like you. ❤️"}, {text:"The silence before the storm",msg:"Mmm… dangerous anticipation. 😏"} ] },
+      { q:"What outfit of yours would you wear to drive me crazy?", options:[ {text:"Short dress",msg:"Legs for days. 😉"}, {text:"Lingerie",msg:"Deadly hot… and you know it. 🔥"}, {text:"My shirt only",msg:"Damn… you’d kill me with that look. 😏"}, {text:"Nothing at all",msg:"Straight to my weakness. 🥵"} ] },
+      { q:"What would you do if I whispered “let’s do it here”?", options:[ {text:"Blush and say no",msg:"Cute… but you’re thinking yes. 😉"}, {text:"Look around and agree",msg:"Risky and thrilling… love it. 🔥"}, {text:"Take my hand",msg:"Silent yes… and I’d follow. ❤️"}, {text:"Pull me right there",msg:"Ohhh… Riyaaa. 🥵"} ] },
+      { q:"If you could freeze time for an hour with me, what would we do?", options:[ {text:"Just kiss",msg:"Sweet and pure… but I know your mind. 😉"}, {text:"Cuddle in bed",msg:"Warm and loving… my baby. ❤️"}, {text:"Explore each other slowly",msg:"You’re a passionate soul. 😏"}, {text:"Go completely wild",msg:"Damn… I’d never unfreeze time. 🔥"} ] },
+      { q:"Which one sounds hotter to you?", options:[ {text:"Making love slowly",msg:"You’re all about the feels. ❤️"}, {text:"Passionate & rough",msg:"Ohhh… you’re a wild one. 🔥"}, {text:"Teasing till you beg",msg:"I can make that happen. 😏"}, {text:"Mixing all of them",msg:"Dangerous… but perfect. 🥵"} ] },
+
+      /* 41 - 50 */
+      { q:"After marriage, will you be comfortable walking around the house completely naked in front of me?", options:[ {text:"Yes, I’d love that every day",msg:"You’re gonna make it very hard for me to ever leave the house. 🔥"}, {text:"Maybe sometimes, if you behave",msg:"Guess I’ll have to be a very good husband then. 😏"}, {text:"Only when I want to tease you",msg:"That’s torture, and I’ll still love every second of it. ❤️"}, {text:"No, I’m too shy for that",msg:"I’ll make sure to change that one day. 😉"} ] },
+      { q:"After marriage, how would you wake me up in the morning?", options:[ {text:"With kisses all over your face",msg:"Best alarm clock ever. 💋"}, {text:"By climbing on top of you",msg:"You’re dangerous, and I like it. 🔥"}, {text:"By whispering naughty things in your ear",msg:"That’s gonna make my mornings… very hot. 😈"}, {text:"By making your favorite breakfast in bed",msg:"You’re perfect wife material. ❤️"} ] },
+      { q:"After marriage, would you be okay with us taking a shower together every day?", options:[ {text:"Yes, every single day",msg:"Water bill’s gonna go up, but so will my heartbeat. 💦"}, {text:"Only when we have time",msg:"Then I’ll make time, always. 😉"}, {text:"Only on weekends",msg:"Weekend goals, sorted. ❤️"}, {text:"No, I like my solo showers",msg:"Guess I’ll have to sneak in. 😏"} ] },
+      { q:"After marriage, will you let me see you change clothes without covering up?", options:[ {text:"Always",msg:"I’ll never get tired of that view. 🔥"}, {text:"Only if you deserve it",msg:"Challenge accepted. 😈"}, {text:"Sometimes, to drive you crazy",msg:"I’m already crazy about you. ❤️"}, {text:"Nope, I’ll keep you guessing",msg:"I’ll be guessing… and imagining. 😉"} ] },
+      { q:"After marriage, how often should we kiss in a day?", options:[ {text:"As many times as possible",msg:"Get ready for non-stop kisses then. 💋"}, {text:"Every hour at least once",msg:"Hourly love doses — I approve. 😍"}, {text:"Morning and night",msg:"Perfect way to start and end my day. ❤️"}, {text:"Only when we feel like it",msg:"I’ll make sure we feel like it… all the time. 😉"} ] },
+      { q:"After marriage, how often do you think we should make love?", options:[ {text:"Every single day",msg:"You’re my dream wife already. 🔥"}, {text:"A few times a week",msg:"That’s still enough to keep my heart racing. ❤️"}, {text:"Whenever the mood strikes",msg:"My mood will strike… a lot. 😏"}, {text:"Only on special occasions",msg:"Then every day will be a special occasion. 😈"} ] },
+      { q:"After marriage, would you let me give you a full body massage… with oil?", options:[ {text:"Yes, anytime you want",msg:"You’re tempting fate… and me. 💦"}, {text:"Only when I’m stressed",msg:"Then I’ll keep you stressed… just a little. 😉"}, {text:"Only if it leads to more",msg:"Trust me, it definitely will. 🔥"}, {text:"No, I’m too ticklish",msg:"I’ll still find a way to make you melt. ❤️"} ] },
+      { q:"After marriage, how would you greet me when I come home from work?", options:[ {text:"With a tight hug and deep kiss",msg:"That’s exactly how I want to end my workday. 😍"}, {text:"By jumping into my arms",msg:"You’ll make me drop my bag… and my self-control. 🔥"}, {text:"By whispering “welcome home, husband” in my ear",msg:"That’s gonna make me want to take you straight to the bedroom. 😈"}, {text:"With a smile and dinner ready",msg:"Wife of the year award… already yours. ❤️"} ] },
+      { q:"After marriage, would you be okay with skinny dipping with me at night?", options:[ {text:"Yes, that sounds thrilling",msg:"You’re adventurous… and I love it. 🔥"}, {text:"Maybe if no one’s around",msg:"Then I’ll find us the perfect hidden spot. 😉"}, {text:"Only if you go first",msg:"Challenge accepted. 😏"}, {text:"No way, too risky",msg:"Guess I’ll have to convince you. ❤️"} ] },
+      { q:"After marriage, would you let me sleep without clothes next to you?", options:[ {text:"Yes, and I’ll do the same",msg:"You’re literally my fantasy. 🔥"}, {text:"Only on hot nights",msg:"Then I’ll make sure every night feels hot. 😏"}, {text:"Sometimes, to tease you",msg:"I’ll be teased… and tortured. ❤️"}, {text:"No, I prefer pajamas",msg:"I’ll slowly make you change your mind. 😉"} ] },
+
+      /* 51 - 60 */
+      { q:"After marriage, how would you surprise me at night?", options:[ {text:"By wearing something very revealing",msg:"You’ll leave me speechless… and restless. 🔥"}, {text:"By sneaking into bed without me noticing",msg:"You’re dangerous in the best way possible. 😏"}, {text:"By waking me up with kisses",msg:"I’ll pretend to be asleep just for that. ❤️"}, {text:"By whispering something naughty in my ear",msg:"That’s how you start a wildfire in my heart. 😈"} ] },
+      { q:"After marriage, would you let me undress you slowly every night?", options:[ {text:"Yes, I’d love that",msg:"I’ll turn every night into a fantasy. 🔥"}, {text:"Only when I’m in the mood",msg:"I’ll make sure you’re always in the mood. 😉"}, {text:"Only if I can undress you too",msg:"Then it’s a deal… every single night. ❤️"}, {text:"No, I like doing it myself",msg:"Guess I’ll just have to help. 😏"} ] },
+      { q:"After marriage, would you cook for me wearing only an apron?", options:[ {text:"Yes, definitely",msg:"You’ll burn more than just the food. 🔥"}, {text:"Maybe on special nights",msg:"I’ll mark every night as special. 😈"}, {text:"Only if you join me",msg:"Then the kitchen’s about to get really hot. 😉"}, {text:"No, I’d be too shy",msg:"I’ll make sure that shyness disappears. ❤️"} ] },
+      { q:"After marriage, how would you tempt me the most?", options:[ {text:"By wearing my shirt and nothing else",msg:"That’s my weakness, and you know it. 🔥"}, {text:"By kissing me unexpectedly",msg:"I’ll never want those kisses to stop. ❤️"}, {text:"By sitting on my lap and teasing me",msg:"You’ll break my self-control. 😈"}, {text:"By sending me naughty texts at work",msg:"I’ll be rushing home in seconds. 😉"} ] },
+      { q:"After marriage, would you let me take you on a romantic getaway just for making love?", options:[ {text:"Yes, 100%",msg:"Then pack your bags… and no clothes. 🔥"}, {text:"Maybe, if I get to choose the place",msg:"Anywhere with you is perfect. ❤️"}, {text:"Only if we try something new there",msg:"Then we’ll make unforgettable memories. 😏"}, {text:"No, that’s too much",msg:"I’ll change your mind… slowly. 😉"} ] },
+      { q:"After marriage, would you let me kiss every part of your body?", options:[ {text:"Yes, please",msg:"You’re in trouble… the good kind. 🔥"}, {text:"Only if you can handle it",msg:"I’ll handle it… and ask for more. 😈"}, {text:"Sometimes, when I want to feel loved",msg:"I’ll make you feel loved every single day. ❤️"}, {text:"No, that’s too much for me",msg:"Then I’ll start with small kisses… and keep going. 😉"} ] },
+      { q:"After marriage, would you be okay with us making love in risky places?", options:[ {text:"Yes, I love the thrill",msg:"You’re a wild one… and I love it. 🔥"}, {text:"Maybe once or twice",msg:"Once won’t be enough for me. 😏"}, {text:"Only if it’s private enough",msg:"I’ll find us the perfect hidden spots. 😉"}, {text:"No, I’m too shy for that",msg:"I’ll still dream about it. ❤️"} ] },
+      { q:"After marriage, would you let me sleep with my hand on you all night?", options:[ {text:"Yes, that’s sweet",msg:"You’ll never escape my touch. ❤️"}, {text:"Only if you behave",msg:"I’ll try… no promises. 😏"}, {text:"Yes, but only sometimes",msg:"Sometimes is better than never. 😉"}, {text:"No, I need space to sleep",msg:"Then I’ll steal it anyway. 🔥"} ] },
+      { q:"After marriage, how would you handle me staring at you when you’re changing?", options:[ {text:"Let you look",msg:"I’ll never look away. 🔥"}, {text:"Tease me even more",msg:"You’ll make me lose my mind. 😈"}, {text:"Pretend you didn’t notice",msg:"I’ll still be memorizing every detail. ❤️"}, {text:"Tell me to stop",msg:"I won’t. 😉"} ] },
+      { q:"After marriage, would you let me carry you to the bed when I’m in the mood?", options:[ {text:"Yes, I’d love that",msg:"Then be ready, because I’ll do it often. 🔥"}, {text:"Only if I’m in the mood too",msg:"I’ll make sure we’re in sync. ❤️"}, {text:"Sometimes, to keep it special",msg:"Every time will be special for me. 😏"}, {text:"No, I prefer walking myself",msg:"I’ll still sweep you off your feet. 😉"} ] }
+    ];
+
+    /* ----------------- runtime helpers ----------------- */
+    const stage = document.getElementById("stage");
+    const bar = document.getElementById("bar");
+    const toastWrap = document.getElementById("toastWrap");
+    const burst = document.getElementById("burst");
+    const crinkleAudio = document.getElementById("crinkle");
+    const AUTO_NEXT_MS = 2200;
+
+    const introCover = { img:"assets/12.jpeg" };
+
+    // shuffle
+    function shuffle(a){ const c=a.slice(); for(let i=c.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [c[i],c[j]]=[c[j],c[i]] } return c; }
+
+    // build slides with photo breaks randomly (questions randomized)
+    function buildSlides(){
+      const qs = shuffle(QUESTION_BANK).map(q=>({type:"question", ...q}));
+      const slides = [{type:"landing", ...introCover}];
+      let i=0, photoIdx=0;
+      while(i<qs.length){
+        const span = Math.min(Math.floor(Math.random()*(PHOTO_MAX_SPAN-PHOTO_MIN_SPAN+1))+PHOTO_MIN_SPAN, qs.length - i);
+        for(let k=0;k<span;k++) slides.push(qs[i+k]);
+        i += span;
+        // insert photos group
+        for(let g=0; g<PHOTOS_PER_GROUP && photoIdx<PHOTO_BREAKS.length && i<qs.length; g++, photoIdx++){
+          const p = PHOTO_BREAKS[photoIdx];
+          slides.push({type:"photo", src:p.src, caption:p.caption});
+        }
+      }
+      slides.push({type:"finale"});
+      return slides;
+    }
+
+    let slides = buildSlides();
+    let idx = 0;
+
+    function setProgress(){
+      const total = slides.length-1;
+      bar.style.width = Math.max(0, Math.min(100, (idx / total) * 100)) + "%";
+    }
+
+    function showToast(text){
+      toastWrap.innerHTML = "";
+      const t = document.createElement("div");
+      t.className = "toast";
+      t.textContent = text;
+      toastWrap.appendChild(t);
+	setTimeout(() => {
+            toastWrap.innerHTML = "";
+        }, 2000);
+
+    }
+function celebrateBurst(){
+  for (let i = 0; i < 30; i++) {
+        let confetti = document.createElement("div");
+    confetti.classList.add("confetti");
+
+    // random position & color
+    confetti.style.left = Math.random() * 100 + "vw";
+    confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+    confetti.style.animationDuration = (Math.random() * 2 + 2) + "s";
+
+    document.body.appendChild(confetti);
+
+    // remove after animation
+    setTimeout(() => confetti.remove(), 3000);
+  }
+}
+
+
+    function render(){
+      setProgress();
+      const s = slides[idx];
+      if(!s) return;
+      if(s.type==="landing"){
+  stage.innerHTML = `
+    <div class="flip-card-container" id="flipCard">
+      <div class="flip-card-inner" id="flipCardInner">
+        <div class="flip-card-front">
+          <img id="landingImg" class="hero-img clickable" src="${s.img}" alt="cover">
+        </div>
+        <div class="flip-card-back center">
+          <div class="first-back-content">
+            <div class="card-message">Happy 1st Anniversary, Riya My Love❤️❤️!</div>
+            <div class="card-journey-text">I have some questions, do you want to answer it? then click me, please Babe😏.</div>
+          </div>
+          <div class="second-back-content" style="display:none;">
+            <div class="card-message" style="font-size: 20px;">
+              For My Riya😘
+            </div>
+            <div class="card-journey-text" style="font-size: 12px;">
+              It's hard to believe a whole year has passed since we began this beautiful journey.<br>
+              Every single day with you has been a gift, a memory I will cherish forever.<br>
+              You've filled my life with a warmth and a joy I never knew existed.<br>
+              The love we share is my greatest adventure, my most treasured destination.<br>
+              With you, every challenge feels conquerable and every moment is sweeter.<br>
+              You are my best friend, my confidante, and my greatest love.<br>
+              Thank you for a year of laughter, growth, and unwavering support.<br>
+              Thank you for being you, in every way.<br>
+              I am a better man because of you.<br>
+              Here's to the first of many anniversaries, and a lifetime of adventures together.<br>
+              I love you more than words can say.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const flipCard = document.getElementById("flipCard");
+  const flipCardInner = document.getElementById("flipCardInner");
+
+  let cardState = 0; // 0: front, 1: first back, 2: second back
+  let isTransitioning = false; // Prevents clicks during the animation
+
+  flipCard.onclick = () => {
+  if (isTransitioning) return;
+  isTransitioning = true;
+
+  if (cardState === 0) {
+    // First click: rotate to the first back
+    flipCard.classList.add('rotated');
+    firstSong.play();
+    cardState = 1;
+    setTimeout(() => { isTransitioning = false; }, 1000);
+
+  } else if (cardState === 1) {
+    // Second click: show second back content
+    flipCardInner.style.transform = 'rotateY(180deg)'; // continue rotation forward
+    document.querySelector('.first-back-content').style.display = 'none';
+    document.querySelector('.second-back-content').style.display = 'block';
+    cardState = 2;
+    setTimeout(() => { isTransitioning = false; }, 1000); // short delay to avoid accidental double-click
+
+  } else if (cardState === 2) {
+    // Third click: go directly to Q&A
+    idx++;
+    render();
+  }
+};
+
+
+  return;
+}
+
+      if(s.type==="question"){
+        stage.innerHTML = `
+          <h1>For ${GF_NAME} — Question</h1>
+          <p class="lead">${s.q}</p>
+          <div class="options" id="opts"></div>
+          <div class="caption small-muted">Question ${slides.slice(0, idx+1).filter(x=>x.type==='question').length} of ${slides.filter(x=>x.type==='question').length}</div>
+        `;
+        const opts = document.getElementById("opts");
+        s.options.forEach(opt=>{
+          const btn = document.createElement("button");
+          btn.className = "option";
+          btn.textContent = opt.text;
+          btn.onclick = ()=>{
+            // lock all buttons
+            opts.querySelectorAll("button.option").forEach(b=>b.disabled=true);
+            // celebrate + message
+            showToast(opt.msg);
+            celebrateBurst();
+            // auto next after short delay
+            setTimeout(()=>{ idx++; render(); }, AUTO_NEXT_MS);
+          };
+          opts.appendChild(btn);
+        });
+        return;
+      }
+
+      if(s.type==="photo"){
+        // envelope + hidden photo + shayari
+        stage.innerHTML = `
+          <div class="envelope-wrap">
+            <div class="envelope" id="envelope">
+              <div class="env-body"></div>
+              <div class="env-liner"></div>
+              <div class="env-flap" id="envFlap"></div>
+              <div class="env-stamp"></div>
+              <div class="env-seal"></div>
+            </div>
+
+            <div class="mail-content" id="mailContent" style="display:none">
+              <img src="${s.src}" alt="memory" class="mail-photo" id="mailPhoto">
+              <div class="shayari-typed" id="shayari"></div>
+              <div class="small-muted">Click the photo once revealed to continue</div>
+            </div>
+          </div>
+        `;
+
+        const envelope = document.getElementById("envelope");
+        const envFlap = document.getElementById("envFlap");
+        const mailContent = document.getElementById("mailContent");
+        const mailPhoto = document.getElementById("mailPhoto");
+        const shayariEl = document.getElementById("shayari");
+
+        let opened = false;
+        let typed = false;
+        // when envelope or seal clicked -> open and reveal content + typewriter
+        envelope.onclick = async ()=>{
+          if(!opened){
+            // open flap (class toggles CSS)
+            envelope.classList.add("open");
+            // play crinkle
+            try{ crinkleAudio.currentTime = 0; await crinkleAudio.play().catch(()=>{}); }catch(e){}
+            // after flap animation delay, show photo container
+            setTimeout(()=>{
+              mailContent.style.display = "block";
+              // reveal photo with animation
+              requestAnimationFrame(()=> mailPhoto.classList.add("show"));
+              // start typewriter for caption
+              startTypewriter(s.caption || "", shayariEl);
+              opened = true;
+            }, 620); // small delay to sync with flap
+          }
+        };
+
+        // second click on photo -> move next
+        mailPhoto.onclick = ()=>{
+          if(opened){
+            // if typing still happening, finish instantly
+            if(isTyping) { finishTypingNow(); return; }
+            // otherwise go next
+            idx++; render();
+          }
+        };
+
+        // typewriter control
+        let isTyping = false;
+        let typingTimer = null;
+        let currentText = "";
+        function startTypewriter(txt, el){
+          if(!txt) return;
+          isTyping = true;
+          el.textContent = "";
+          currentText = txt;
+          let i = 0;
+          const speed = 28; // ms per char
+          typingTimer = setInterval(()=>{
+            i++;
+            el.textContent = currentText.slice(0,i);
+            if(i >= currentText.length){
+              clearInterval(typingTimer);
+              isTyping = false;
+              typed = true;
+            }
+          }, speed);
+        }
+        function finishTypingNow(){
+          if(typingTimer) clearInterval(typingTimer);
+          document.getElementById("shayari").textContent = currentText;
+          isTyping = false;
+          typed = true;
+        }
+
+        return;
+      }
+
+      if(s.type==="finale"){
+        stage.innerHTML = `
+          <h1>Mission Pyaar Complete 🎉</h1>
+          <img class="hero-img" src="assets/cover.jpg" alt="hearts background">
+          <p class="caption">${GF_NAME}, tum meri favorite notification ho. ${ANNIV_TEXT}. Bas yuhi saath chalna — aage bahut lambi kahani likhni hai. 💞</p>
+          <div class="nav">
+            <button class="btn" id="replay">Play Again</button>
+            <button class="btn secondary" id="reshuffle">Shuffle & Replay</button>
+          </div>
+        `;
+        document.getElementById("replay").onclick = ()=>{ idx = 1; render(); };
+        document.getElementById("reshuffle").onclick = ()=>{ slides = buildSlides(); idx = 1; render(); };
+        return;
+      }
+    } // render end
+
+    // music toggle
+    const bgm = document.getElementById("bgm");
+    const soundBtn = document.getElementById("soundBtn");
+    soundBtn.onclick = async ()=>{
+      if(bgm.paused){ await bgm.play().catch(()=>{}); soundBtn.textContent='🔊 Music'; soundBtn.setAttribute('aria-pressed','true'); }
+      else{ bgm.pause(); soundBtn.textContent='🔈 Music'; soundBtn.setAttribute('aria-pressed','false'); }
+    };
+
+    // kick off
+    render();
+ // Get the image and audio elements
+    var startImage = document.getElementById('landingImg');
+    var firstSong = document.getElementById('firstSong');
+    var secondSong = document.getElementById('secondSong');
+
+    // Add an event listener to the image
+    startImage.addEventListener('click', function() {
+        firstSong.play(); // Start the first song when the image is clicked
+    });
+
+    // Add an event listener to the first song to play the second one
+    firstSong.addEventListener('ended', function() {
+        secondSong.play();
+    });
+
+    // Make the second song loop indefinitely
+    secondSong.loop = true;
+ </script>
+</body>
+</html>
